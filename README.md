@@ -35,7 +35,7 @@
 | 39 | [高知](https://ikainoriyuki.github.io/webmap/39_kouchi/) | 有 | 有 |
 | 42 | [長崎](https://ikainoriyuki.github.io/webmap/42_nagasaki/) | 有 | 有 |
 
-# 地図の差し替えと目的地データの登録
+# 地図の差し替えと目的地データの搭載（要ウェブサーバー）
 
 整備中
 
