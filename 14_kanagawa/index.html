@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>神奈川県webmap</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css">
+
+</head>
+
+<body>
+  <div id="map"></div>
+  <div class="crosshair"></div>
+  <div id="info"><font color="#00FFFF">● </font><span id="currentLat"></span>, <span id="currentLng"></span>, <span id="currentElevation"></span>m<br><font color="blue">＋ </font><span id="mapCenterLat"></span>, <span id="mapCenterLng"></span>, <span id="mapCenterElevation"></span>m</div>
+  <button id="saveCenterBtn">REC＋</button>
+  <button id="saveBtn">REC●</button>
+  <div id="loading">現在地取得中...</div>
+
+  <div class="menu">
+    <span class="closeBtn">&times;閉じる</span>
+    <h2>データ読み込み</h2>
+      <button class="menuBtn", id="loadGeoJSON">GeoJSON</button>
+      <input type="file" id="fileInput" accept=".geojson" style="display: none;" />
+    <h2>データ出力</h2>
+      <p><button class="menuBtn", id="exportGpxBtn">GPX</button></p>
+      <p><button class="menuBtn", id="exportKmlBtn">KML</button></p>
+      <p><button class="menuBtn", id="exportGeoJSONBtn">GeoJSON</button></p>
+    <h2>データクリア</h2>
+      <p><button class="menuBtn", id="allClearBtn">全消去</button>
+    <div class="toggleBtn"><i class="fas fa-bars"></i></div> 
+
+  <script src="map_init.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
