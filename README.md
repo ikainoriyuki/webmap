@@ -23,6 +23,7 @@
 | -------------| ------------- | ------------- | ------------- |
 | 09 | [栃木](https://ikainoriyuki.github.io/webmap/09_tochigi/) | 有 | 有 |
 | 13 | [東京（多摩地域）](https://ikainoriyuki.github.io/webmap/13_tokyo/) | 有 | 無 |
+| 14 | [神奈川](https://ikainoriyuki.github.io/webmap/14_kanagawa/) | 有 | 無 |
 | 16 | [富山](https://ikainoriyuki.github.io/webmap/16_toyama/) | 有 | 有 |
 | 19 | [山梨](https://ikainoriyuki.github.io/webmap/19_yamanashi/) | 有 | 無 |
 | 20 | [長野](https://ikainoriyuki.github.io/webmap/20_nagano/) | 有 | 無 |
