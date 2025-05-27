@@ -53,7 +53,7 @@ html, body, #map{
     height: 1px;
     border-radius: 10px;
     border: 1px solid #fdfdfd;
-    background-color: orange;
+    background-color: rgb(70, 70, 70);
 }
 
 .labelPoint {
