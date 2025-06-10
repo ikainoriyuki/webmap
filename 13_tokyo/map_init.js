@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   微地形表現図: L.tileLayer(
     'https://forestgeo.info/opendata/13_tokyo/inyouzu_2022/{z}/{x}/{y}.webp',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //レーザー林相図: L.tileLayer(
     //'https://rinya-ehime.geospatial.jp/tile/rinya/2024/ls_standtype_Ehime/{z}/{x}/{-y}.png',
     //{
-      //minZoom: 14,
+      //minZoom: 13,
       //maxNativeZoom: 18,
       //maxZoom: 20,
       //tms: false,
