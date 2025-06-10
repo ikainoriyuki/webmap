@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   CS立体図: L.tileLayer(
     'https://forestgeo.info/opendata/22_shizuoka/csmap_2023/{z}/{x}/{y}.webp',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //レーザ林相図: L.tileLayer(
     //'https://rinya-tochigi.geospatial.jp/2023/rinya/tile/ls_standtype/{z}/{x}/{y}.png',
     //{
-      //minZoom: 14,
+      //minZoom: 13,
       //maxNativeZoom: 18,
       //maxZoom: 20,
       //tms: false,
