@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   微地形表現図: L.tileLayer(
     'https://rinya-kyoto.geospatial.jp/tile/rinya/2024/rrim_KyotoPref/{z}/{x}/{y}.png',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   レーザー林相図: L.tileLayer(
     'https://rinya-kyoto.geospatial.jp/tile/rinya/2024/ls_standtype_KyotoPref/{z}/{x}/{y}.png',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
