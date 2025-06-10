@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   赤色立体図: L.tileLayer(
     'https://rinya-toyama.geospatial.jp/tile/rinya/2024/rrimap/{z}/{x}/{y}.png',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   林相識別図: L.tileLayer(
     'https://forestgeo.info/opendata/16_toyama/ls_standtype_2021/{z}/{x}/{y}.webp',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
