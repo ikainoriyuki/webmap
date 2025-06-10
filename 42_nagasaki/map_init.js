@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   微地形表現図: L.tileLayer(
     'https://forestgeo.info/opendata/42_nagasaki/rrim_2022/{z}/{x}/{y}.webp',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   レーザ林相図: L.tileLayer(
     'https://forestgeo.info/opendata/42_nagasaki/ls_standtype_2022/{z}/{x}/{y}.webp',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
