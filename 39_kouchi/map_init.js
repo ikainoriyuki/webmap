@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   CS立体図: L.tileLayer(
     'https://rinya-kochi.geospatial.jp/2023/rinya/tile/csmap/{z}/{x}/{y}.png',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   レーザ林相図: L.tileLayer(
     'https://rinya-kochi.geospatial.jp/2023/rinya/tile/ls_standtype/{z}/{x}/{y}.png',
     {
-      minZoom: 14,
+      minZoom: 13,
       maxNativeZoom: 18,
       maxZoom: 20,
       tms: false,
