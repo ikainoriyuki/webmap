@@ -15,30 +15,14 @@ html, body, #map{
     height: 20px;
     margin-top: -10px;
     margin-left: -10px;
-    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><line x1="0" y1="50" x2="100" y2="50" stroke="blue" stroke-width="10"/><line x1="50" y1="0" x2="50" y2="100" stroke="blue" stroke-width="10"/></svg>');
+    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><line x1="0" y1="50" x2="100" y2="50" stroke="white" stroke-width="20"/><line x1="50" y1="0" x2="50" y2="100" stroke="white" stroke-width="20"/><line x1="0" y1="50" x2="100" y2="50" stroke="blue" stroke-width="10"/><line x1="50" y1="0" x2="50" y2="100" stroke="blue" stroke-width="10"/></svg>');
     pointer-events: none;
     z-index: 1000;
 }
 
-/* 緯度経度標高の表示*/
-#info {
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    padding: 5px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 11px;
-    text-shadow: 
-    -1px -1px 0 white, /* 左上 */
-    1px -1px 0 white, /* 右上 */
-    -1px 1px 0 white, /* 左下 */
-    1px 1px 0 white;  /* 右下 */
-    z-index: 1000;
-    margin: 0 auto;
-}
 
 .label {
-    font-size: 12px;
+    font-size: 15px;
     text-align: center;
     font-weight: bold;
     text-shadow: 
@@ -58,7 +42,7 @@ html, body, #map{
 
 .labelPoint {
     white-space: nowrap; /* 横書きで改行を防ぐ */
-    font-size: 12px;
+    font-size: 15px;
     text-align: right;
     font-weight: bold;
     padding: 10px;
@@ -70,6 +54,22 @@ html, body, #map{
     -1px 1px 0 white, /* 左下 */
     1px 1px 0 white;  /* 右下 */
 }
+
+/* ツールチップのデフォルトスタイルを上書き */
+.leaflet-tooltip.my-label-tooltip {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    font-weight: bold;
+    color: #333;
+    padding: 0; /* 余計なパディングを削除 */
+    text-shadow: 
+    -1px -1px 0 white, /* 左上 */
+    1px -1px 0 white, /* 右上 */
+    -1px 1px 0 white, /* 左下 */
+    1px 1px 0 white;  /* 右下 */
+}
+
 
 /* スライドメニュー */
 .menu {
@@ -116,7 +116,7 @@ html, body, #map{
     color: darkslategray;
 }
 .menuBtn {
-    background-color: white; /* 背景色を白色に設定 */
+    background-color: lavender; /* 背景色を白色に設定 */
     color: darkslategray;
     padding: 10px 10px;
     border: 1px;
@@ -125,14 +125,59 @@ html, body, #map{
     cursor: pointer;
 }
 
+/* ---ラベル選択--- */
 
 
-/* ---ボタン--- */
-/* 十字を保存ボタン */
-#saveCenterBtn {
-    position: absolute;
-    bottom: 45px;
-    right: 20px;
+.label-select {
+  width: 50%;
+  max-width: 320px;
+  padding: 10px 1px;
+  font-size: 14px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(175, 219, 255, 0.5);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  appearance: none;
+  text-align: center;
+  margin: 0 auto 20px auto;
+
+}
+
+
+
+/* ---配置--- */
+#bottom-container {
+  position: fixed;
+  bottom: 15px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  z-index: 1000;
+}
+
+#button-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#coordinate-text {
+  color: rgb(0, 0, 0);
+  background-color: rgba(255,255,255, 0.5);
+  font-size: 12px;
+  text-shadow: 
+    -1px -1px 0 white, /* 左上 */
+    1px -1px 0 white, /* 右上 */
+    -1px 1px 0 white, /* 左下 */
+    1px 1px 0 white;  /* 右下 */
+  padding: 5px 10px;
+  border-radius: 5px;
+  align-self: flex-start;
+}
+
+button {
     /* transform: translateX(-50%); */
     padding: 10px 20px;
     background-color: red;
@@ -141,57 +186,21 @@ html, body, #map{
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
-    z-index: 1000;
-}
-#saveCenterBtn:hover {
-    background-color: darkred;
-}
-
-/* 現在地を保存ボタン */
-#saveBtn {
-    position: absolute;
-    bottom: 45px;
-    left: 20px;
-    /* transform: translateX(-50%); */
-    padding: 10px 20px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 1000;
-}
-#saveBtn:hover {
-    background-color: darkred;
-}
-
-/* 現在地取得中の表示 */
-#loading {
-    display: none;
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 5px;
-    z-index: 1000;
+    z-index: 100;
 }
 
 
- 
+
 
 /* バルーンのスタイル */
 .popup-content {
-    font-size: 18px; /* 文字サイズを大きく設定 */
+    font-size: 15px; /* 文字サイズを大きく設定 */
 }
 
 /* バルーン内の編集・削除ボタン用のスタイル */
 .edit-button {
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     border-radius: 5px;
     background-color: #28a745; /* 編集ボタンの色 (緑) */
     color: white;
@@ -201,13 +210,15 @@ html, body, #map{
 
 .delete-button {
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     border-radius: 5px;
     background-color: #dc3545; /* 削除ボタンの色 (赤) */
     color: white;
     border: none;
     cursor: pointer;
 }
+
+
 
 /* スマートフォン用のスタイルを追加 */
 @media (max-width: 1200px) {
@@ -232,15 +243,14 @@ html, body, #map{
     padding: 5px;
     }
 
-    #saveBtn {
-    font-size: 18px;
-    padding: 10px;
-    }
-    #saveCenterBtn {
-    font-size: 18px;
-    padding: 10px;
+    .leaflet-tooltip.my-label-tooltip {
+        font-size: 14px;
     }
 
+    button {
+    font-size: 18px;
+    padding: 10px;
+    }
 
     #edit-btn {
     font-size: 18px;
