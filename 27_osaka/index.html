@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <title>大阪府webmap</title>
   <meta charset="utf-8" />
@@ -14,29 +14,48 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css">
+  <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+  
 
 </head>
 
 <body>
   <div id="map"></div>
   <div class="crosshair"></div>
-  <div id="info"><font color="#00FFFF">● </font><span id="currentLat"></span>, <span id="currentLng"></span>, <span id="currentElevation"></span>m<br><font color="blue">＋ </font><span id="mapCenterLat"></span>, <span id="mapCenterLng"></span>, <span id="mapCenterElevation"></span>m</div>
-  <button id="saveCenterBtn">REC＋</button>
-  <button id="saveBtn">REC●</button>
-  <div id="loading">現在地取得中...</div>
 
+  <div id="bottom-container">
+    <div id="button-row">
+        <button id="saveCenterBtn">REC＋</button>
+        <button id="saveBtn">REC〇</button>
+    </div>
+    <div id="coordinate-text">
+      <font color="#00FFFF">● </font><span id="currentLat"></span>, <span id="currentLng"></span>, <span id="currentElevation"></span>m<br>
+      <font color="blue">＋ </font><span id="mapCenterLat"></span>, <span id="mapCenterLng"></span>, <span id="mapCenterElevation"></span>m<br>
+      ＋までの距離: <span id="distance">---</span> 標高差: <span id="elevationDifference">---</span>
+    </div>
+  </div>
+  
   <div class="menu">
     <span class="closeBtn">&times;閉じる</span>
-    <h2>データ読み込み</h2>
-      <button class="menuBtn", id="loadGeoJSON">GeoJSON</button>
-      <input type="file" id="fileInput" accept=".geojson" style="display: none;" />
+    <h2>データ読込</h2>
+      <button class="menuBtn", id="loadGeoJSON">GeoJSON/KML/GPX</button>
+      <input type="file" id="fileInput" accept=".geojson, .kml, .gpx" style="display: none;" />
+      <p>
+        <label for="labelAttr", class="label-select-title">ラベル</label>
+        <select id="labelAttr", class="label-select"></select>
+        <button id="applyLabel", class="menuBtn">表示</button>
+      </p>
     <h2>データ出力</h2>
-      <p><button class="menuBtn", id="exportGpxBtn">GPX</button></p>
-      <p><button class="menuBtn", id="exportKmlBtn">KML</button></p>
       <p><button class="menuBtn", id="exportGeoJSONBtn">GeoJSON</button></p>
-    <h2>データクリア</h2>
-      <p><button class="menuBtn", id="allClearBtn">全消去</button>
-    <div class="toggleBtn"><i class="fas fa-bars"></i></div> 
+      <p><button class="menuBtn", id="exportKmlBtn">KML</button></p>
+      <p><button class="menuBtn", id="exportGpxBtn">GPX</button></p>
+    <h2>データ消去</h2>
+      <p><button class="menuBtn", id="allClearBtn">POI消去</button>
+      <p><button class="menuBtn", id="clearGeojson">読込データ消去</button></p>
+    <div class="toggleBtn"><i class="fas fa-bars"></i></div>
+  </div> 
 
   <script src="map_init.js"></script>
   <script src="script.js"></script>
