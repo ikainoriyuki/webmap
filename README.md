@@ -21,7 +21,9 @@
 
 | No　| 都道府県 | 微地形図 |林相図 |
 | -------------| ------------- | ------------- | ------------- |
+| 04 | [宮城](https://ikainoriyuki.github.io/webmap/04_miyagi/) | 有 | 無 |
 | 09 | [栃木](https://ikainoriyuki.github.io/webmap/09_tochigi/) | 有 | 有 |
+| 11 | [埼玉](https://ikainoriyuki.github.io/webmap/11_saitama/) | 有 | 無 |
 | 13 | [東京（多摩地域）](https://ikainoriyuki.github.io/webmap/13_tokyo/) | 有 | 無 |
 | 14 | [神奈川](https://ikainoriyuki.github.io/webmap/14_kanagawa/) | 有 | 無 |
 | 16 | [富山](https://ikainoriyuki.github.io/webmap/16_toyama/) | 有 | 有 |
@@ -29,9 +31,11 @@
 | 20 | [長野](https://ikainoriyuki.github.io/webmap/20_nagano/) | 有 | 無 |
 | 21 | [岐阜](https://ikainoriyuki.github.io/webmap/21_gifu/) | 有 | 無 |
 | 22 | [静岡](https://ikainoriyuki.github.io/webmap/22_shizuoka/) | 有 | 無 |
+| 25 | [滋賀](https://ikainoriyuki.github.io/webmap/25_siga/) | 有 | 有 |
 | 26 | [京都](https://ikainoriyuki.github.io/webmap/26_kyoto/) | 有 | 有 |
 | 27 | [大阪](https://ikainoriyuki.github.io/webmap/27_osaka/) | 有 | 無 |
 | 28 | [兵庫](https://ikainoriyuki.github.io/webmap/28_hyogo/) | 有 | 有 |
+| 33 | [岡山](https://ikainoriyuki.github.io/webmap/33_okayama/) | 有 | 無 |
 | 38 | [愛媛](https://ikainoriyuki.github.io/webmap/38_ehime/) | 有 | 有 |
 | 39 | [高知](https://ikainoriyuki.github.io/webmap/39_kouchi/) | 有 | 有 |
 | 42 | [長崎](https://ikainoriyuki.github.io/webmap/42_nagasaki/) | 有 | 有 |
