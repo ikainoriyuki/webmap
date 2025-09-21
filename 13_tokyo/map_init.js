@@ -3,14 +3,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const map = L.map('map', {
     // サイトを開いたときの地図の中心座標とそのときのズームレベル（縮尺）
     center: [35.689501,139.691722],
-    zoom: 13,
+    zoom: 14,
+    maxZoom: 23,
   });
 
   const baseLayers = {
     OpenStreetMap: L.tileLayer(
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
-        maxZoom: 19,
+        minZoom: 1,
+        maxNativeZoom: 20,
+        maxZoom: 20,
+        tms: false,
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       },
@@ -48,28 +52,28 @@ document.addEventListener('DOMContentLoaded', function() {
           '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
       },
     ),
-  // 微地形表現図
-  微地形表現図: L.tileLayer(
-    'https://forestgeo.info/opendata/13_tokyo/inyouzu_2022/{z}/{x}/{y}.webp',
-    {
-      minZoom: 13,
-      maxNativeZoom: 18,
-      maxZoom: 20,
-      tms: false,
-      attribution: '<a href="https://www.geospatial.jp/ckan/dataset/rinya-tokyo-maptiles">東京都・陰陽図（多摩地域2022）林野庁加工</a>',
-    },
-  ),
-  // レーザー林相図
-  //レーザー林相図: L.tileLayer(
-    //'https://rinya-ehime.geospatial.jp/tile/rinya/2024/ls_standtype_Ehime/{z}/{x}/{-y}.png',
-    //{
-      //minZoom: 13,
-      //maxNativeZoom: 18,
-      //maxZoom: 20,
-      //tms: false,
-      //attribution: '<a href="https://www.geospatial.jp/ckan/dataset/csmap_ehime">愛媛県森林資源データ</a>',
-    //},
-  //),
+    // 微地形表現図
+    微地形表現図: L.tileLayer(
+      'https://forestgeo.info/opendata/13_tokyo/inyouzu_2022/{z}/{x}/{y}.webp',
+      {
+        minZoom: 14,
+        maxNativeZoom: 18,
+        maxZoom: 20,
+        tms: false,
+        attribution: '<a href="https://www.geospatial.jp/ckan/dataset/rinya-tokyo-maptiles">東京都・陰陽図（多摩地域2022）林野庁加工</a>',
+      },
+    ),
+    // レーザー林相図
+    //レーザー林相図: L.tileLayer(
+      //'https://rinya-ehime.geospatial.jp/tile/rinya/2024/ls_standtype_Ehime/{z}/{x}/{-y}.png',
+      //{
+        //minZoom: 14,
+        //maxNativeZoom: 18,
+        //maxZoom: 20,
+        //tms: false,
+        //attribution: '<a href="https://www.geospatial.jp/ckan/dataset/csmap_ehime">愛媛県森林資源データ</a>',
+      //},
+    //),
   };
   map.addLayer(baseLayers['地理院地図']);
 
@@ -104,10 +108,10 @@ const colorDict = {
 
     const polygons = L.geoJSON(json, {
       style: (feature) => ({
-        color: "orange",
+        color: "black",
         weight: 2,
         opacity: 1,
-        fillOpacity: 0.2,
+        fillOpacity: 0.1,
       }),
       onEachFeature: (feature, layer) => {
         if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
@@ -136,7 +140,7 @@ const colorDict = {
     polygonLayerGroup.addTo(map);
 
     // LayersControlにLayerGroupを追加
-    layersControl.addOverlay(polygonLayerGroup, 'ポリゴン');
+    // layersControl.addOverlay(polygonLayerGroup, 'ポリゴン');
   })
   .catch((error) => {
     console.error(error);
@@ -156,7 +160,7 @@ const colorDict = {
 
     const lines = L.geoJSON(json, {
       style: (feature) => ({
-        color: "green",
+        color: "black",
       }),
       onEachFeature: (feature, layer) => {
         if (feature.geometry.type === 'LineString') {
@@ -185,7 +189,7 @@ const colorDict = {
     lineLayerGroup.addTo(map);
 
     // LayersControlにLayerGroupを追加
-    layersControl.addOverlay(lineLayerGroup, 'ライン');
+    // layersControl.addOverlay(lineLayerGroup, 'ライン');
   })
   .catch((error) => {
     console.error(error);
@@ -225,18 +229,27 @@ fetch(pointUrl)
     });
 
     pointlayerGroup.addTo(map);
-    layersControl.addOverlay(pointlayerGroup, 'ポイント');
+    // layersControl.addOverlay(pointlayerGroup, 'ポイント');
   })
   .catch((error) => {
       console.error(error);
   });
 
+  // マップがロードされた後に一度だけ現在地を取得し、中心を移動
+  map.once('locationfound', (e) => {
+      // 現在地が取得できた時の処理
+      const latlng = e.latlng;
+      
+      // 地図の中心を現在地に設定
+      map.setView(latlng, 16); // ズームレベルを15に設定
+  });
 
   let option = {
     enableHighAccuracy: true,
     watch: true,
     position: 'topright',
     drawCircle: true,
+    setView: false, // 現在地に移動しない
     follow: true,
     keepCurrentZoomLevel: true,
     strings: {
@@ -248,9 +261,35 @@ fetch(pointUrl)
   };
 
   let lc = L.control.locate(option).addTo(map);
+
   lc.start();
 
   L.control.scale({maxwidth: 200, position: 'bottomright', imperial: false }).addTo(map);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("locateBtn").addEventListener("click", jumpToLocation);
+  });
+
+
+  // ズームレベル表示用のカスタムコントロール
+  const zoomDisplay = L.control({ position: 'bottomright' });
+
+  zoomDisplay.onAdd = function (map) {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update(map.getZoom());
+      return this._div;
+  };
+
+  zoomDisplay.update = function (zoom) {
+      this._div.innerHTML = `<div>Zoom: ${zoom}</div>`;
+  };
+
+  zoomDisplay.addTo(map);
+
+  // ズームが変更されたときに表示を更新するイベントリスナー
+  map.on('zoomend', function () {
+      zoomDisplay.update(map.getZoom());
+  });
 
   // mapとlcをグローバルスコープに公開するか、script.jsに引数として渡す
   window.map = map;
