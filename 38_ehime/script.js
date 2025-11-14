@@ -1,100 +1,200 @@
-// script.js
+/*!
+ * きみどりマップ v1.0.1
+ *
+ * Copyright Noriyuki IKAI
+ * Released under the MIT license
+ * https://github.com/ikainoriyuki/webmap/blob/main/LICENSE
+ *
+ * Date: 2025-11-14
+ */
+
+
 document.addEventListener('DOMContentLoaded', function() {
-  // Ensure map and lc are available from map_init.js
   const map = window.map;
-  const lc = window.lc;
+
+  // Geolocation APIで測位。Locate Controlは高精度にならないので利用しない。要調査
+  let currentLocationMarker = null; // 現在地マーカー（L.circleMarker）
+  let currentAccuracyCircle = null; // 精度円（L.circle）
+  let locationWatchId = null;       // watchPositionのID
 
   // --- 座標表示 ---
-      // DOM要素の取得
-    const mapCenterLatElement = document.getElementById('mapCenterLat');
-    const mapCenterLngElement = document.getElementById('mapCenterLng');
-    const mapCenterElevationElement = document.getElementById('mapCenterElevation');
-    const currentLatElement = document.getElementById('currentLat');
-    const currentLngElement = document.getElementById('currentLng');
-    const currentElevationElement = document.getElementById('currentElevation');
-    const distanceElement = document.getElementById('distance');
-    const elevationDifferenceElement = document.getElementById('elevationDifference');
+  // DOM要素の取得
+  const mapCenterLatElement = document.getElementById('mapCenterLat');
+  const mapCenterLngElement = document.getElementById('mapCenterLng');
+  const mapCenterElevationElement = document.getElementById('mapCenterElevation');
+  const currentLatElement = document.getElementById('currentLat');
+  const currentLngElement = document.getElementById('currentLng');
+  const currentElevationElement = document.getElementById('currentElevation');
+  const distanceElement = document.getElementById('distance');
+  const elevationDifferenceElement = document.getElementById('elevationDifference');
 
-    // 位置情報と標高を格納する変数
-    let currentLocation = null;
-    let mapCenterLocation = null;
+  // 位置情報と標高を格納する変数
+  let currentLocation = null;
+  let mapCenterLocation = null;
 
-    
+  // 標高の取得とコールバック関数
+  function updateElevation(lat, lng, element, callback) {
+    const elevationUrl = `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${lng}&lat=${lat}`;
 
-    // 標高の取得とコールバック関数
-    function updateElevation(lat, lng, element, callback) {
-        const elevationUrl = `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${lng}&lat=${lat}`;
-
-        fetch(elevationUrl)
-            .then(response => response.json())
-            .then(data => {
-                const elevation = data.elevation;
-                if (elevation !== undefined) {
-                    element.textContent = elevation.toFixed(2);
-                    if (callback) callback(elevation);
-                } else {
-                    element.textContent = 'N/A';
-                    if (callback) callback(null);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching elevation data:', error);
-                element.textContent = 'Error';
-                if (callback) callback(null);
-            });
-    }
-
-    // 距離と標高差の計算と表示
-    function updateCalculations() {
-      if (currentLocation && currentLocation.elevation !== null && mapCenterLocation && mapCenterLocation.elevation !== null) {
-        // LeafletのdistanceTo()メソッドで距離を計算（メートル）
-        const distanceMeters = L.latLng(currentLocation.lat, currentLocation.lng).distanceTo(L.latLng(mapCenterLocation.lat, mapCenterLocation.lng));
-        // 標高差を計算
-        const elevationDifference = mapCenterLocation.elevation - currentLocation.elevation;
-
-        distanceElement.textContent = `${(distanceMeters).toFixed(0)} m`;
-        elevationDifferenceElement.textContent = `${elevationDifference.toFixed(0)} m`;
+    fetch(elevationUrl)
+    .then(response => response.json())
+    .then(data => {
+      const elevation = data.elevation;
+      if (elevation !== undefined) {
+        element.textContent = elevation.toFixed(2);
+        if (callback) callback(elevation);
+      } else {
+        element.textContent = 'N/A';
+        if (callback) callback(null);
       }
-    }
-
-    // 地図の中心情報を更新
-    function updateMapCenter() {
-      const center = map.getCenter();
-      mapCenterLocation = { lat: center.lat, lng: center.lng, elevation: null };
-      mapCenterLatElement.textContent = center.lat.toFixed(5);
-      mapCenterLngElement.textContent = center.lng.toFixed(5);
-      updateElevation(center.lat, center.lng, mapCenterElevationElement, (elevation) => {
-          mapCenterLocation.elevation = elevation;
-          updateCalculations();
-      });
-    }
-
-    // 現在地情報を更新
-    function updateCurrentLocation(e) {
-        const { lat, lng } = e.latlng;
-        currentLocation = { lat, lng, elevation: null };
-        currentLatElement.textContent = lat.toFixed(5);
-        currentLngElement.textContent = lng.toFixed(5);
-        updateElevation(lat, lng, currentElevationElement, (elevation) => {
-            currentLocation.elevation = elevation;
-            updateCalculations();
-        });
-    }
-
-    // イベントリスナーの設定
-    map.on('moveend', updateMapCenter);
-    map.on('locationfound', (e) => {
-        updateCurrentLocation(e);
-        updateMapCenter(); // 現在地が取得されたら、地図の中心情報も更新
+    })
+    .catch(error => {
+      console.error('Error fetching elevation data:', error);
+      element.textContent = 'Error';
+      if (callback) callback(null);
     });
+  }
 
+  // 距離と標高差の計算と表示
+  function updateCalculations() {
+    if (currentLocation && currentLocation.elevation !== null && mapCenterLocation && mapCenterLocation.elevation !== null) {
+      // 距離と標高差を計算
+      const distanceMeters = L.latLng(currentLocation.lat, currentLocation.lng).distanceTo(L.latLng(mapCenterLocation.lat, mapCenterLocation.lng));
+      const elevationDifference = mapCenterLocation.elevation - currentLocation.elevation;
 
-    // ページロード時に一度だけ実行
-    updateMapCenter();
+      distanceElement.textContent = `${(distanceMeters).toFixed(0)} m`;
+      elevationDifferenceElement.textContent = `${elevationDifference.toFixed(0)} m`;
+    }
+  }
 
+  // 地図の中心情報を更新
+  function updateMapCenter() {
+    const center = map.getCenter();
+    mapCenterLocation = { lat: center.lat, lng: center.lng, elevation: null };
+    mapCenterLatElement.textContent = center.lat.toFixed(5);
+    mapCenterLngElement.textContent = center.lng.toFixed(5);
+    updateElevation(center.lat, center.lng, mapCenterElevationElement, (elevation) => {
+        mapCenterLocation.elevation = elevation;
+        updateCalculations();
+    });
+  }
+
+  // ⭐ 現在地情報を更新 (Geolocation APIの Position オブジェクトを受け取るように修正)
+  function updateCurrentLocation(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+
+    const latlng = L.latLng(lat, lng);
+    currentLocation = { lat, lng, elevation: null };
+    currentLatElement.textContent = lat.toFixed(5);
+    currentLngElement.textContent = lng.toFixed(5);
+    
+    // Leafletマーカーの更新/作成
+    if (!currentLocationMarker) {
+      // 初回: マーカーを作成
+      currentLocationMarker = L.circleMarker(latlng, {
+        radius: 8,
+        fillColor: '#0070FF', // 青色
+        color: '#FFFFFF',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.8
+      }).addTo(map);
+        
+      // 初回測位時に地図の中心を現在地に移動
+      map.setView(latlng, 16); 
+      
+      // 精度円
+      currentAccuracyCircle = L.circle(latlng, {
+          radius: accuracy,
+          color: '#136AEC',
+          fillColor: '#136AEC',
+          fillOpacity: 0.15,
+          weight: 1,
+          opacity: 0.2
+      }).addTo(map);
+
+      // 測位完了後に測位中を示すアニメーションを無効化
+      const currentLocationBtn = document.getElementById('currentLocationControl');
+      currentLocationBtn.classList.remove('locating');
+
+    } else {
+      // 2回目以降: マーカーの位置と精度円を更新
+      currentLocationMarker.setLatLng(latlng);
+      currentAccuracyCircle.setLatLng(latlng).setRadius(accuracy);
+    }
+    
+    // 標高の更新
+    updateElevation(lat, lng, currentElevationElement, (elevation) => {
+      currentLocation.elevation = elevation;
+      updateCalculations();
+    });
+  }
+
+  // イベントリスナーの設定
+  map.on('moveend', updateMapCenter);
+
+  // ページロード時に一度だけ実行
+  updateMapCenter();
+  
+  // Geolocation API の継続的な監視を開始
+  function startGeolocationWatch() {
+    if ('geolocation' in navigator) {
+      const currentLocationBtn = document.getElementById('currentLocationControl');
+      currentLocationBtn.classList.add('locating'); // 測位開始時にアニメーションを有効化
+
+      const options = {
+        enableHighAccuracy: true, // 高精度設定
+        timeout: 30000,           // タイムアウト
+        maximumAge: 0             // キャッシュを使わない
+      };  
+          
+      locationWatchId = navigator.geolocation.watchPosition(
+        // 成功時のコールバック
+        (position) => {
+          updateCurrentLocation(position);
+                
+          // 測位成功時にもスリープ防止をリセット
+          if (sleepTimer) {
+            clearTimeout(sleepTimer);
+            sleepTimer = null;
+          }
+            enableWakeLock();
+            disableWakeLockDelayed();
+        },
+        // 失敗時のコールバック
+        (error) => {
+          console.error('Geolocation Error:', error);
+          currentLatElement.textContent = 'Error';
+          currentLngElement.textContent = 'Error';
+          currentElevationElement.textContent = 'Error';
+          if (currentLocationMarker) {
+            map.removeLayer(currentLocationMarker);
+            currentLocationMarker = null;
+          }
+          if (currentAccuracyCircle) {
+            map.removeLayer(currentAccuracyCircle);
+            currentAccuracyCircle = null;
+          }
+          currentLocationBtn.classList.remove('locating'); // 測位失敗時にアニメーションを無効化
+          console.warn(`現在地の取得に失敗しました: ${error.message}`);
+        },
+          options
+      );
+    } else {
+      alert("このブラウザは位置情報サービスに対応していません。");
+    }
+  }
+  
+  // ページロード時に測位を開始
+  startGeolocationWatch();
+
+  //--- マーカー保存機能 ---
   // マーカーを保存記録する配列
   let poiArray = [];
-
+  loadPOIArray();
+  
   function getPreviousPOINumber() {
     if (poiArray.length === 0) return 0;
     const lastPOI = poiArray[poiArray.length - 1];
@@ -123,12 +223,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function saveCurrentLocation() {
-    const markerLatLng = lc._marker.getLatLng();
-
-    if (!markerLatLng) {
+    if (!currentLocationMarker) {
       alert("現在地が取得されていません。まずは現在地を表示してください。");
       return;
     }
+    const markerLatLng = currentLocationMarker.getLatLng();
 
     const previousNumber = getPreviousPOINumber();
     const suggestedNumber = previousNumber + 1;
@@ -149,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let newPOI = {
       latlng: markerLatLng,
       timestamp: new Date(),
-      positioning: "GNSS-based",
+      positioning: "Positioning-based",
       number: number,
       description: description.trim()
     };
@@ -268,10 +367,6 @@ document.addEventListener('DOMContentLoaded', function() {
       alert("データが削除されました。");
     }
   }
-
-  window.onload = function() {
-    loadPOIArray();
-  };
 
   //--- エクスポート ---
   function createFileName() {
@@ -621,6 +716,99 @@ document.addEventListener('DOMContentLoaded', function() {
     polygonTooltips.forEach(tooltip => map.removeLayer(tooltip));
     polygonTooltips = [];
 
+  });
+
+  // ---
+  // スリープロック
+  // ---
+
+  let wakeLockSentinel = null;
+  let sleepTimer;
+
+  // スリープ無効化の遅延時間（3分）
+  const SLEEP_DELAY_MS = 180000; 
+
+  // 画面スリープロックを有効化する
+  async function enableWakeLock() {
+    // --- デバッグ用ログを追加 ---
+    console.log('--- enableWakeLock 関数開始 ---');
+    
+    // Wake Lock API のサポートを確認
+    if (!('wakeLock' in navigator)) {
+      console.warn('WakeLock API: 未サポートのため処理を中断します。');
+      return; 
+    }
+
+    // ロックが既に有効な場合は何もしない
+    if (wakeLockSentinel) {
+      console.log('WakeLock API: 既に有効なため新規要求は行いません。');
+      return; 
+    }
+    if (!('wakeLock' in navigator)) {
+      return;
+    }
+    if (wakeLockSentinel) {
+      return;
+    }
+        
+    try {
+      wakeLockSentinel = await navigator.wakeLock.request('screen');
+      console.log('WakeLock API: 画面スリープ防止を有効化しました。');
+
+      wakeLockSentinel.addEventListener('release', () => {
+        console.log('WakeLock API: 画面スリープが解放されました。');
+        wakeLockSentinel = null;
+      });
+    } catch (err) {
+      console.error(`WakeLock APIの有効化に失敗しました: ${err.name}`);
+    }
+  }
+
+  // 画面スリープロックを遅延して無効化する
+  function disableWakeLockDelayed() {
+    if (sleepTimer) {
+      clearTimeout(sleepTimer);
+    }
+
+    sleepTimer = setTimeout(async () => {
+      if (wakeLockSentinel) {
+        await wakeLockSentinel.release();
+        console.log(`WakeLock API: 画面スリープ防止を無効化しました (操作終了から${SLEEP_DELAY_MS / 60000}分経過)。`);
+        wakeLockSentinel = null;
+      }
+      sleepTimer = null;
+    }, SLEEP_DELAY_MS);
+  }
+
+  // イベントリスナーの設定:
+  // 1. 地図操作開始時 (movestart) にスリープ防止を有効化
+  map.on('movestart', () => {
+    // 操作開始時にタイマーをリセットし、ロックを有効にする
+    if (sleepTimer) {
+      clearTimeout(sleepTimer);
+      sleepTimer = null;
+    }
+    enableWakeLock();
+  });
+    
+  // 2. 地図操作終了時 (moveend) にタイマーを設定し、３分後に無効化
+  map.on('moveend', disableWakeLockDelayed);
+
+  // 現在地移動ボタンのクリックイベントを設定
+  const currentLocationBtn = document.getElementById('currentLocationControl');
+
+  currentLocationBtn.addEventListener('click', function() {
+    if (currentLocationMarker) {
+      const latlng = currentLocationMarker.getLatLng();
+      
+      // 現在地マーカーに地図の中心を移動し、ズームレベルを16に設定
+      map.setView(latlng, map.getZoom() < 16 ? 16 : map.getZoom());
+      
+      console.log("地図の中心を現在地へ移動しました。");
+    } else {
+      // マーカーがない場合は、測位開始の警告を出す
+      alert("現在地情報がまだ取得されていません。");
+    }
   });
 
   const exportGpxBtn = document.querySelector('#exportGpxBtn');
