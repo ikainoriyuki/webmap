@@ -12,8 +12,6 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css">
   <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
@@ -24,6 +22,10 @@
 <body>
   <div id="map"></div>
   <div class="crosshair"></div>
+
+  <div id="currentLocationControl" title="現在地に移動">
+    <i class="fas fa-location-arrow"></i>
+  </div>
 
   <div id="bottom-container">
     <div id="button-row">
